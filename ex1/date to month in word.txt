@@ -1,0 +1,57 @@
+[24bcs051@mepcolinux compiler]$cat newdate.l
+%{
+#include<stdio.h>
+
+char *month[]={
+"",
+"Jan","Feb","Mar","Apr","May","Jun",
+"Jul","Aug","Sep","Oct","Nov","Dec"
+};
+
+int d,m,y;
+%}
+
+%%
+
+[0-9][0-9]-[0-9][0-9]-[0-9][0-9][0-9][0-9] {
+    sscanf(yytext,"%d-%d-%d",&d,&m,&y);
+    printf("%02d %s,%04d",d,month[m],y);
+}
+
+\n    {
+    printf("\n");
+}
+
+.     {
+    putchar(yytext[0]);
+}
+
+%%
+
+int yywrap()
+{
+    return 1;
+}
+
+int main()
+{
+    yyin=fopen("input1.txt","r");
+
+    if(yyin==NULL)
+    {
+        printf("File not found\n");
+        return 0;
+    }
+
+    yylex();
+
+    fclose(yyin);
+
+    return 0;
+    }
+[24bcs051@mepcolinux compiler]$lex newdate.l
+[24bcs051@mepcolinux compiler]$gcc lex.yy.c -ll
+[24bcs051@mepcolinux compiler]$./a.out
+today is my birthday 24 Feb,2007
+[24bcs051@mepcolinux compiler]$cat input1.txt
+today is my birthday 24-02-2007
