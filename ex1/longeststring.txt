@@ -1,0 +1,81 @@
+24bcs051@mepcolinux compiler]$cat newlong.l
+%{
+#include<stdio.h>
+#include<string.h>
+
+int max = 0;
+int count = 0;
+int len;
+int i;
+
+char longest[100][100];
+%}
+
+%%
+
+[A-Za-z][A-Za-z0-9]*    {
+    len = strlen(yytext);
+
+    if(len > max)
+    {
+        max = len;
+        count = 0;
+        strcpy(longest[count], yytext);
+        count++;
+    }
+    else if(len == max)
+    {
+        strcpy(longest[count], yytext);
+        count++;
+    }
+}
+
+\n      ;
+
+.       ;
+
+%%
+
+int yywrap()
+{
+    return 1;
+}
+
+int main()
+{
+    yyin = fopen("long.txt","r");
+
+    if(yyin == NULL)
+    {
+        printf("File not found\n");
+        return 0;
+    }
+
+    yylex();
+
+    printf("Longest String Length = %d\n", max);
+    printf("Longest String(s):\n");
+
+    for(i=0; i<count; i++)
+    {
+        printf("%s\n", longest[i]);
+    }
+
+    fclose(yyin);
+
+    return 0;
+}
+[24bcs051@mepcolinux compiler]$lex newlong.l
+[24bcs051@mepcolinux compiler]$gcc lex.yy.c -ll
+[24bcs051@mepcolinux compiler]$./a.out
+Longest String Length = 10
+Longest String(s):
+Computer99
+Hello12345
+Student123
+[24bcs051@mepcolinux compiler]$cat long.txt
+abc
+Computer99
+Hello12345
+Student123
+A12
